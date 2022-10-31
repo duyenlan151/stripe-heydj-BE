@@ -16,6 +16,9 @@ const calculateOrderAmount = (items) => {
   // people from directly manipulating the amount on the client
   return 1400;
 };
+app.get("/", async (req, res) => {
+  res.send("Hello");
+});
 
 app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
