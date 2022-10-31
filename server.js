@@ -1,6 +1,6 @@
 const express = require("express");
-const app = express();
 var cors = require('cors')
+const app = express();
 // This is a public sample test API key.
 // Don’t submit any personally identifiable information in requests made with this key.
 // Sign in to see your own test API key embedded in code samples.
@@ -34,4 +34,6 @@ app.post("/create-payment-intent", async (req, res) => {
   });
 });
 
-app.listen(4242, () => console.log("Node server listening on port 4242!"));
+app.listen(process.env.PORT, () => {
+  console.log("Server listening on port " + process.env.PORT);
+});
