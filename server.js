@@ -21,20 +21,59 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
-
-  // Create a PaymentIntent with the order amount and currency
+  const customer = await stripe.customers.create();
+  const ephemeralKey = await stripe.ephemeralKeys.create(
+    {customer: customer.id},
+    {apiVersion: '2022-08-01'}
+  );
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(items),
-    currency: "usd",
-    automatic_payment_methods: {
-      enabled: true,
-    },
+    amount: 1099,
+    currency: 'eur',
+    customer: customer.id,
+      payment_method_types: [
+      'bancontact',
+      'card',
+      'eps',
+      'giropay',
+      'ideal',
+      'p24',
+      'sepa_debit',
+      'sofort',
+    ],
   });
 
-  res.send({
+  res.json({
     clientSecret: paymentIntent.client_secret,
+    ephemeralKey: ephemeralKey.secret,
+    customer: customer.id,
+    publishableKey: 'pk_test_TYooMQauvdEDq54NiTphI7jx'
   });
+  // const { items } = req.body;
+  // const customer = await stripe.customers.create();
+
+  // // Create a PaymentIntent with the order amount and currency
+  // const paymentIntent = await stripe.paymentIntents.create({
+  //   customer: customer.id,
+  //   currency: 'EUR',
+  //   amount: 1999,
+  //   // automatic_payment_methods: { enabled: true },
+  //   // payment_method_types: ['card', 'afterpay_clearpay', ''],
+  //   payment_method_types: [
+  //     'bancontact',
+  //     'card',
+  //     'eps',
+  //     'giropay',
+  //     'ideal',
+  //     'p24',
+  //     'sepa_debit',
+  //     'sofort',
+  //   ],
+  //   // billing_address_collection: 'required'
+  // });
+
+  // res.send({
+  //   clientSecret: paymentIntent.client_secret,
+  // });
 });
 
 app.listen(process.env.PORT, () => {
